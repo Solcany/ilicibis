@@ -9,6 +9,21 @@ const canvasElement =
 const canvasCtx = canvasElement.getContext('2d');
 
 
+function getAbsoluteBoundingBox(normalizedBox, absW, absH) {
+	let nW = normalizedBox.width;
+	let nH = normalizedBox.height;
+	let nX = normalizedBox.xCenter;
+	let nY = normalizedBox.yCenter;
+	
+	let w = nW * absW;
+	let h = nH * absH;
+	let x = nX * absW - (w/2);
+	let y = nY * absH - (h/2);
+	
+	return [x, y, w, h];
+}
+
+
 function onResults(results) {
   // Hide the spinner.
   document.body.classList.add('loaded');
@@ -16,10 +31,18 @@ function onResults(results) {
   // Draw the overlays.
   canvasCtx.save();
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+  
+  
   canvasCtx.drawImage(
       results.image, 0, 0, canvasElement.width, canvasElement.height);
-  console.log(results.detections[0].boundingBox.height);
- 
+  
+  if(results.detections[0]) {
+	  let boundingBox = getAbsoluteBoundingBox(results.detections[0].boundingBox, canvasElement.width, canvasElement.height);
+	  canvasCtx.beginPath();
+	  canvasCtx.rect(...boundingBox);
+	  canvasCtx.stroke();
+  }
+  
   //let faceImg = canvasCtx.getImageData(...results.detections[0].boundingBox);
     
   /*
