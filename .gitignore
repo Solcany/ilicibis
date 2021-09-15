@@ -1,3 +1,7 @@
+# folders
+/old
+/editor
+
 # Logs
 logs
 *.log
