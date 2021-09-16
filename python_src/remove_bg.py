@@ -85,16 +85,20 @@ with mp_face_detection.FaceDetection(min_detection_confidence=0.6) as face_detec
 			  bg_image[:] = BG_COLOR
 			 
 			output_image = np.where(mask, image, bg_image)
-				
+			
 			if face_results.detections:
 				for detection in face_results.detections:
 					rel_box = detection.location_data.relative_bounding_box
 					abs_box = getAbsoluteBoundingBox(rel_box, W, H)
 					xL, yL, xR, yR = expandBoundingBox(abs_box, 0.25)
+					faceIm = image[int(xL):int(xR), int(yL):int(yR)]
+					faceImW = int(xR) - int(xL)
+					faceImH = int(yR) - int(yL)
+					output_image[0:faceImW, 0:faceImH] = faceIm
 					cv2.rectangle(output_image, (int(xL), int(yL)), (int(xR), int(yR)), (0, 255, 0), 2)
-					
+				
 			cv2.imshow('MediaPipe Selfie Segmentation', output_image)
-
+			
 			if cv2.waitKey(5) & 0xFF == 27:
 			  break
 		  
